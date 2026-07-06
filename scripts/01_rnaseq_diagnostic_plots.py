@@ -355,45 +355,45 @@ print("Plot 02 saved: genomic feature assignment")
 # WHAT BAD LOOKS LIKE:
 #   Samples below red threshold → failed sequencing or poor RNA quality.
 #   Bimodal distribution → batch effects.
-
+ 
 lib_sizes = counts_filtered.sum(axis=0) / 1e6
 lib_df    = pd.DataFrame({
     "sample"  : lib_sizes.index,
     "lib_size": lib_sizes.values,
     "cohort"  : meta.loc[lib_sizes.index, "cohort"].values
 }).sort_values("lib_size").reset_index(drop=True)
-
+ 
 median_lib    = lib_df["lib_size"].median()
 low_threshold = median_lib * 0.2
-
+ 
 fig, ax = plt.subplots(figsize=(14, 5))
 colors = [PALETTE.get(c, "#aaaaaa") for c in lib_df["cohort"]]
 ax.bar(range(len(lib_df)), lib_df["lib_size"], color=colors, width=1.0)
-ax.axhline(median_lib,    linestyle="--", color="black", linewidth=1.0,
-           label=f"Median: {median_lib:.1f}M")
-ax.axhline(low_threshold, linestyle=":",  color="red",   linewidth=1.0,
-           label="Low threshold (20% of median)")
-ax.text(5, median_lib + 1.5, f"Median: {median_lib:.1f}M", fontsize=9)
-ax.text(5, low_threshold + 1.5, "Low threshold (20% of median)",
-        fontsize=8, color="red")
-
+ 
+# Draw lines AFTER bars so they appear on top
+ax.axhline(median_lib,    linestyle="--", color="black", linewidth=1.5, zorder=5)
+ax.axhline(low_threshold, linestyle="--", color="red",   linewidth=1.5, zorder=5)
+ax.text(5, median_lib + 1.5, f"Median: {median_lib:.1f}M", fontsize=9, zorder=6)
+ax.text(5, low_threshold + 2.5, "Low threshold (20% of median)",
+        fontsize=8, color="black", zorder=6)
+ 
 # Legend for cohorts
 handles = [mpatches.Patch(color=PALETTE[c], label=c) for c in cohort_order
            if c in lib_df["cohort"].values]
 ax.legend(handles=handles, loc="upper left", fontsize=9, title="Cohort")
-
+ 
 ax.set_title("03. Library Size Distribution", fontweight="bold", fontsize=13)
 ax.set_xlabel(f"Sample (ordered by library size) | n={len(lib_df)}")
 ax.set_ylabel("Library Size (millions of reads)")
 ax.set_xlim(-1, len(lib_df))
 ax.set_xticks([])
 ax.grid(axis="y", alpha=0.3)
-
+ 
 plt.tight_layout()
 plt.savefig("figures/03_library_size.png", dpi=300, bbox_inches="tight")
 plt.close()
 print("Plot 03 saved: library size distribution")
-
+ 
 
 # ==============================================================================
 # PLOT 04: GENE DETECTION PER SAMPLE
@@ -407,7 +407,7 @@ print("Plot 03 saved: library size distribution")
 #
 # WHAT BAD LOOKS LIKE:
 #   Samples below 5,000 genes → poor RNA quality or failed extraction.
-
+ 
 n_genes = (counts_filtered > 0).sum(axis=0)
 gene_df = pd.DataFrame({
     "sample" : n_genes.index,
@@ -416,9 +416,9 @@ gene_df = pd.DataFrame({
 })
 gene_df["cohort"] = pd.Categorical(gene_df["cohort"], categories=cohort_order)
 gene_df = gene_df.sort_values("cohort")
-
+ 
 fig, ax = plt.subplots(figsize=(9, 5))
-
+ 
 for i, cohort in enumerate(cohort_order):
     subset = gene_df[gene_df["cohort"] == cohort]["n_genes"]
     if len(subset) == 0:
@@ -431,21 +431,21 @@ for i, cohort in enumerate(cohort_order):
                     medianprops=dict(color="black", linewidth=2))
     bp["boxes"][0].set_facecolor(PALETTE[cohort])
     bp["boxes"][0].set_alpha(0.3)
-
+ 
 ax.axhline(5000, linestyle="--", color="red", linewidth=1)
 ax.text(-0.4, 5300, "5,000 gene minimum", fontsize=8, color="red")
 ax.set_xticks(range(len(cohort_order)))
 ax.set_xticklabels(cohort_order, fontsize=10)
-ax.set_title("04. Gene Detection per Sample", fontweight="bold", fontsize=13)
+ax.set_title(
+    "04. Gene Detection per Sample\n"
+    "GSE161731 | Samples with fewer than 5,000 genes detected should be investigated",
+    fontweight="bold", fontsize=11
+)
 ax.set_xlabel("")
 ax.set_ylabel("Number of Genes Detected (count > 0)")
-ax.set_subtitle = ax.set_title
-ax.text(0.5, 1.02,
-        "GSE161731 | Samples with fewer than 5,000 genes detected should be investigated",
-        transform=ax.transAxes, ha="center", fontsize=9, color="grey")
 ax.grid(axis="y", alpha=0.3)
-
-plt.tight_layout()
+ 
+plt.tight_layout(rect=[0, 0, 1, 0.97])
 plt.savefig("figures/04_gene_detection.png", dpi=300, bbox_inches="tight")
 plt.close()
 print("Plot 04 saved: gene detection per sample")
