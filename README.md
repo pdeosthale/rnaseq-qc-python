@@ -172,4 +172,4 @@ program for assigning sequence reads to genomic features. *Bioinformatics* 30,
 
 ## License
 
-MIT License — see [LICENSE](LICENSE) for details. This code is shared for demonstration and educational purposes; verify results independently before relying on them in any downstream analysis.
+MIT License — see [LICENSE](LICENSE) for details.
