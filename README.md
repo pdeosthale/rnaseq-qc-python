@@ -169,3 +169,7 @@ https://www.bioinformatics.babraham.ac.uk/projects/fastqc/
   Liao, Y., Smyth, G.K. & Shi, W. featureCounts: an efficient general purpose
 program for assigning sequence reads to genomic features. *Bioinformatics* 30,
 923-930 (2014). https://doi.org/10.1093/bioinformatics/btt656
+
+## License
+
+MIT License — see [LICENSE](LICENSE) for details. This code is shared for demonstration and educational purposes; verify results independently before relying on them in any downstream analysis.
