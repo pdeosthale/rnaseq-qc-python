@@ -128,11 +128,11 @@ scripts/
 
 figures/
   ├── 01_per_base_quality_simulated.png
-├── 02_genomic_feature_assignment_simulated.png
-├── 03_library_size.png
-├── 04_gene_detection.png
-├── 05_biotype_distribution.png
-└── 06_pca_outlier_detection.png
+  ├── 02_genomic_feature_assignment_simulated.png
+  ├── 03_library_size.png
+  ├── 04_gene_detection.png
+  ├── 05_biotype_distribution.png
+  └── 06_pca_outlier_detection.png
 
 data/                               # Downloaded from GEO on first run (not tracked)
   ```
