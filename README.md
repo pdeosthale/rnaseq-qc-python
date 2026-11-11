@@ -10,8 +10,8 @@ Python equivalent of the R version in
 
 How do you know if your RNA-seq data is high quality before running
 differential expression analysis? This repo provides a six-plot QC workflow
-that catches the most common problems — failed sequencing runs, contamination,
-outlier samples, and biotype composition issues — before they affect downstream
+that catches the most common problems, including failed sequencing runs, contamination,
+outlier samples, and biotype composition issues, before they affect downstream
 results.
 
 ## Disclaimer
@@ -22,43 +22,43 @@ designed and conducted by McClain et al. (2021).
 
 ## Dataset
 
-**GSE161731** — Blood RNA-seq from patients with respiratory infections and
+**GSE161731**: Blood RNA-seq from patients with respiratory infections and
 healthy controls. McClain et al. *Nature Communications* 12, 1079 (2021).
 https://doi.org/10.1038/s41467-021-21289-y
 
-Data downloads automatically from GEO on first run — no manual download
+Data downloads automatically from GEO on first run, with no manual download
 required.
 
 ## Plots Covered
 
-### Stage 1 — Pre-alignment QC (raw FASTQ)
+### Stage 1: Pre-alignment QC (raw FASTQ)
 
 These plots require raw FASTQ or BAM files in practice. Simulated data illustrates typical patterns. Generate with FastQC and MultiQC.
 
 | Plot | Data | What it shows | Tool (in practice) |
-  |---|---|---|---|
-  | 01. Per-base sequence quality | Simulated | Phred quality scores across 150bp read positions — good vs 3' degradation | FastQC + MultiQC |
-| 02. Genomic feature assignment | Simulated | Exon/intron/intergenic/rRNA fractions — good vs four failure modes | featureCounts (Subread) |
+|---|---|---|---|
+| 01. Per-base sequence quality | Simulated | Phred quality scores across 150bp read positions, comparing good vs 3' degradation | FastQC + MultiQC |
+| 02. Genomic feature assignment | Simulated | Exon/intron/intergenic/rRNA fractions, comparing good vs four failure modes | featureCounts (Subread) |
 
-### Stage 2 — Count-level QC (after alignment and counting)
+### Stage 2: Count-level QC (after alignment and counting)
 
 | Plot | Data | What it shows |
 |---|---|---|
-| 03. Library size distribution | Real | Total mapped reads per sample — flags low-depth samples |
+| 03. Library size distribution | Real | Total mapped reads per sample, used to flag low-depth samples |
 | 04. Gene detection per sample | Real | Number of genes detected per sample |
 | 05. RNA biotype distribution | Real | Proportion of reads mapping to protein-coding, ncRNA, rRNA, etc. |
 
-### Stage 3 — Sample-level QC (outlier detection)
+### Stage 3: Sample-level QC (outlier detection)
 
 | Plot | Data | What it shows |
 |---|---|---|
-| 06. PCA — outlier detection | Real | Identifies extreme samples more than 3 SD from mean on PC1 or PC2 |
+| 06. PCA outlier detection | Real | Identifies extreme samples more than 3 SD from mean on PC1 or PC2 |
 
 ## Key Interpretations
 
 **Per-base sequence quality (Plot 01):** Good: Phred scores consistently above
 Q30 with a slight acceptable decline at the 3' end. Bad: sharp drop below Q20
-after position 100 — trim with Trimmomatic or Cutadapt before alignment.
+after position 100, so trim with Trimmomatic or Cutadapt before alignment.
 
 **Genomic feature assignment (Plot 02):** Good: more than 60% exonic reads.
 High intronic (more than 40%) suggests DNA contamination. High rRNA (more than
@@ -66,7 +66,7 @@ High intronic (more than 40%) suggests DNA contamination. High rRNA (more than
 
 **Library size distribution (Plot 03):** Good: consistent depth, median 20-80M
 reads. Flag samples below 20% of the median (red line). Cross-reference with
-gene detection — low library size AND low gene detection = failed sample.
+gene detection: low library size AND low gene detection together indicate a failed sample.
 
 **Gene detection per sample (Plot 04):** Good: 12,000-18,000 genes detected per
 sample, consistent within cohorts. Samples below 5,000 genes should be
@@ -87,16 +87,16 @@ This repo intentionally mirrors the R version
 to demonstrate equivalent workflows in both languages.
 
 | Step | R | Python |
-  |---|---|---|
-  | Data loading | `read.csv` | `pandas.read_csv` |
-  | Normalization | `edgeR::cpm(log=TRUE)` | Custom `log2_cpm()` function |
-  | PCA | `prcomp()` | `sklearn.decomposition.PCA` |
-  | Biotype annotation | `org.Hs.eg.db` | `mygene` API |
-  | Plotting | `ggplot2` + `pheatmap` | `matplotlib` + `seaborn` |
+|---|---|---|
+| Data loading | `read.csv` | `pandas.read_csv` |
+| Normalization | `edgeR::cpm(log=TRUE)` | Custom `log2_cpm()` function |
+| PCA | `prcomp()` | `sklearn.decomposition.PCA` |
+| Biotype annotation | `org.Hs.eg.db` | `mygene` API |
+| Plotting | `ggplot2` + `pheatmap` | `matplotlib` + `seaborn` |
   
-  **One difference:** Python PCA uses log2-CPM without TMM normalization, while
+**One difference:** Python PCA uses log2-CPM without TMM normalization, while
 the R version uses TMM-normalized CPM from edgeR. This causes a minor
-difference in outlier detection — the R version identifies 3 outliers
+difference in outlier detection: the R version identifies 3 outliers
 (X94478, X434482, X434741) while Python identifies 2 (X94478, X434741).
 X434482 falls just inside the 3 SD threshold without TMM normalization.
 
@@ -151,7 +151,7 @@ files (FastQC/MultiQC) and alignment BAM files (featureCounts/RSeQC).
 - Biotype annotations use the mygene API which requires an internet connection.
 The API returns broad gene type categories; more granular annotations are
 available from Ensembl BioMart.
-- PCA uses log2-CPM without TMM normalization — minor difference from the R
+- PCA uses log2-CPM without TMM normalization, which is a minor difference from the R
 version which uses TMM-normalized CPM.
 - QC thresholds (20% median library size, 5,000 gene minimum, 70%
                    protein-coding, 3 SD for PCA) are appropriate for blood RNA-seq and may
@@ -172,4 +172,4 @@ program for assigning sequence reads to genomic features. *Bioinformatics* 30,
 
 ## License
 
-MIT License — see [LICENSE](LICENSE) for details.
+MIT License. See [LICENSE](LICENSE) for details.
