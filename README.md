@@ -68,7 +68,7 @@ High intronic (more than 40%) suggests DNA contamination. High rRNA (more than
 reads. Flag samples below 20% of the median (red line). Cross-reference with
 gene detection: low library size AND low gene detection together indicate a failed sample.
 
-**Gene detection per sample (Plot 04):** Good: 12,000-18,000 genes detected per
+**Gene detection per sample (Plot 04):** Good: 12,000-25,000 genes detected per
 sample, consistent within cohorts. Samples below 5,000 genes should be
 investigated.
 
